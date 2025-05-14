@@ -5,16 +5,17 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const code = params?.code as string;
   if (!code) return { notFound: true };
 
-  // 백엔드에서 uuid만 가져오기
-  const apiRes = await fetch(`${process.env.API_BASE_URL}/short/${code}`);
-  if (!apiRes.ok) return { notFound: true };
-  const { uuid } = await apiRes.json();
+  const fetchUrl = `${process.env.API_BASE_URL}/short/${code}`;
+  const res = await fetch(fetchUrl);
+  if (!res.ok) return { notFound: true };
 
-  // /share/:uuid 로 리다이렉트
+  const { uuid } = (await res.json()) as { uuid: string };
+  if (!uuid) return { notFound: true };
+
   return {
     redirect: {
       destination: `/share/${uuid}`,
-      permanent: false,  // 302
+      statusCode: 302,
     },
   };
 };
