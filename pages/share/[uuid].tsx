@@ -38,12 +38,12 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params, re
   const nameOnly = data.name.length > 1 ? data.name.slice(1) : data.name;
   const title = `${nameOnly}님의 ${mm}월 ${dd}일 운세 🥠`;
   const firstSentence = data.message.split('. ')[0] + '.';
-  const description = `${firstSentence}`;
+  const description = firstSentence;
   const proto = req.headers['x-forwarded-proto'] || 'https';
   const host = req.headers.host;
   const origin = `${proto}://${host}`;
   const image = `${origin}/logo.png`;
-  const url = `${origin}/share/${uuid}`;
+  const url = `https://luckstargram.com/share/${uuid}`; // 메인 도메인으로 리다이렉트 목표
 
   return {
     props: {
@@ -68,8 +68,10 @@ export default function SharePage({ meta }: Props) {
         <meta name="twitter:title" content={meta.title} />
         <meta name="twitter:description" content={meta.description} />
         <meta name="twitter:image" content={meta.image} />
+        {/* 즉시 메인 도메인으로 리다이렉트 */}
+        <meta httpEquiv="refresh" content={`0; URL=${meta.url}`} />
       </Head>
-      {/* 본문은 빈 div (OG 메타만 필요) */}
+      {/* 빈 바디: OG 메타를 위한 최소 구조 */}
       <div />
     </>
   );
