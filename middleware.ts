@@ -13,7 +13,7 @@ export async function middleware(req: NextRequest) {
   const code = codeMatch[1];
 
   // 1) API로 UUID 조회
-  const apiRes = await fetch(`${process.env.API_BASE_URL}/short/${code}`);
+  const apiRes = await fetch(`${process.env.API_BASE_URL}/short/${code}`,  { next: { revalidate: 300 } });
   if (!apiRes.ok) {
     return NextResponse.next(); // 없는 코드면 그냥 404 페이지로
   }
