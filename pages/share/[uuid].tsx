@@ -1,6 +1,8 @@
 // pages/share/[uuid].tsx
-import { GetServerSideProps } from 'next';
+import { GetStaticPaths, GetStaticProps } from 'next';
 import Head from 'next/head';
+
+export const runtime = 'experimental-edge'; // Edge Runtime 사용
 
 interface Data {
   name: string;
@@ -9,29 +11,38 @@ interface Data {
   action_tip: string;
 }
 
-interface Props {
-  meta: {
-    title: string;
-    description: string;
-    image: string;
-    url: string;
-  };
+interface Meta {
+  title: string;
+  description: string;
+  image: string;
+  url: string;
 }
 
-export const getServerSideProps: GetServerSideProps<Props> = async ({ params, req }) => {
+interface Props {
+  meta: Meta;
+}
+
+// 1) getStaticPaths: 모든 경로를 미리 생성하지 않고, 요청 시 blocking fallback 처리
+export const getStaticPaths: GetStaticPaths = async () => ({
+  paths: [],
+  fallback: 'blocking',
+});
+
+// 2) ISR: 60초마다 페이지를 백그라운드에서 재생성
+export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
   const uuid = params?.uuid as string;
   if (!uuid) {
     return { notFound: true };
   }
 
-  // 1) 운세 데이터 호출
+  // 백엔드에서 공유용 운세 데이터 fetch
   const res = await fetch(`${process.env.API_BASE_URL}/share/${uuid}`);
   if (!res.ok) {
     return { notFound: true };
   }
   const data: Data = await res.json();
 
-  // 2) OG 메타 생성
+  // OG 메타 생성
   const d = new Date(data.fortune_date);
   const mm = d.getMonth() + 1;
   const dd = d.getDate();
@@ -39,16 +50,17 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params, re
   const title = `${nameOnly}님의 ${mm}월 ${dd}일 운세 🥠`;
   const firstSentence = data.message.split('. ')[0] + '.';
   const description = firstSentence;
-  const proto = req.headers['x-forwarded-proto'] || 'https';
-  const host = req.headers.host;
-  const origin = `${proto}://${host}`;
+
+  // site origin 은 환경변수에서
+  const origin = `https://luckstargram.com`;
   const image = `${origin}/logo.webp`;
-  const url = `https://luckstargram.com/share/${uuid}`;
+  const url = `${origin}/share/${uuid}`;
 
   return {
     props: {
       meta: { title, description, image, url },
     },
+    revalidate: 60, // ISR: 60초마다 백그라운드에서 페이지 재생성
   };
 };
 
@@ -58,20 +70,26 @@ export default function SharePage({ meta }: Props) {
       <Head>
         <title>{meta.title}</title>
         <meta name="description" content={meta.description} />
-        <meta property="og:type" content="website" />
-        <meta property="og:title" content={meta.title} />
+
+        {/* Open Graph */}
+        <meta property="og:type"        content="website" />
+        <meta property="og:title"       content={meta.title} />
         <meta property="og:description" content={meta.description} />
-        <meta property="og:image" content={meta.image} />
-        <meta property="og:url" content={meta.url} />
-        <meta property="og:locale" content="ko_KR" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={meta.title} />
+        <meta property="og:image"       content={meta.image} />
+        <meta property="og:url"         content={meta.url} />
+        <meta property="og:locale"      content="ko_KR" />
+
+        {/* Twitter Card */}
+        <meta name="twitter:card"        content="summary_large_image" />
+        <meta name="twitter:title"       content={meta.title} />
         <meta name="twitter:description" content={meta.description} />
-        <meta name="twitter:image" content={meta.image} />
-        {/* 즉시 메인 도메인으로 리다이렉트 */}
+        <meta name="twitter:image"       content={meta.image} />
+
+        {/* 클라이언트 리디렉트: 즉시 메인 도메인 이동 */}
         <meta httpEquiv="refresh" content={`0; URL=${meta.url}`} />
       </Head>
-      {/* 빈 바디: OG 메타를 위한 최소 구조 */}
+
+      {/* 빈 바디: OG 메타만 필요 */}
       <div />
     </>
   );
