@@ -12,9 +12,10 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const { uuid } = (await res.json()) as { uuid: string };
   if (!uuid) return { notFound: true };
 
+  
   return {
     redirect: {
-      destination: `/share/${uuid}`,
+      destination: `https://luckstargram.com/share/${uuid}`,
       statusCode: 302,
     },
   };
