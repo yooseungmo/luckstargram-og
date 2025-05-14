@@ -1,11 +1,11 @@
+// next.config.js
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  experimental: {
-    appDir: false,  
-  },
   env: {
-    API_BASE_URL: process.env.API_BASE_URL
-  }
+    API_BASE_URL: process.env.API_BASE_URL,
+  },
+  // rewrites, experimental.appDir 제거!
 };
+
 module.exports = nextConfig;
