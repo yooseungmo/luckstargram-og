@@ -42,8 +42,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params, re
   const proto = req.headers['x-forwarded-proto'] || 'https';
   const host = req.headers.host;
   const origin = `${proto}://${host}`;
-  const image = `${origin}/logo.png`;
-  const url = `https://luckstargram.com/share/${uuid}`; // 메인 도메인으로 리다이렉트 목표
+  const image = `${origin}/logo.webp`;
+  const url = `https://luckstargram.com/share/${uuid}`;
 
   return {
     props: {
