@@ -1,7 +1,7 @@
 {
   "version": 2,
   "rewrites": [
-    { "source": "/share/:uuid", "destination": "/share/:uuid" },
-    { "source": "/:code",       "destination": "/:code" }
+    { "source": "/:code", "destination": "/share/[code]" },
+    { "source": "/share/:uuid", "destination": "/share/[uuid]" }
   ]
 }
