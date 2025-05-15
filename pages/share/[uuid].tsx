@@ -1,8 +1,8 @@
 // pages/share/[uuid].tsx
-import { GetStaticPaths, GetStaticProps } from 'next';
+import { GetServerSideProps, GetStaticPaths } from 'next';
 import Head from 'next/head';
 
-export const runtime = 'experimental-edge'; // Edge Runtime 사용
+// export const runtime = 'experimental-edge';
 
 interface Data {
   name: string;
@@ -29,7 +29,7 @@ export const getStaticPaths: GetStaticPaths = async () => ({
 });
 
 // 2) ISR: 60초마다 페이지를 백그라운드에서 재생성
-export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
+export const getServerSideProps: GetServerSideProps<Props> = async ({ params }) => {
   const uuid = params?.uuid as string;
   if (!uuid) {
     return { notFound: true };
