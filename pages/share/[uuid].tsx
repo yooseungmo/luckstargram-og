@@ -1,8 +1,8 @@
 // pages/share/[uuid].tsx
-import { GetServerSideProps, GetStaticPaths } from 'next';
+import { GetStaticPaths, GetStaticProps } from 'next';
 import Head from 'next/head';
 
-// export const runtime = 'experimental-edge';
+export const runtime = 'experimental-edge'; // Edge Runtime 사용
 
 interface Data {
   name: string;
@@ -29,7 +29,7 @@ export const getStaticPaths: GetStaticPaths = async () => ({
 });
 
 // 2) ISR: 60초마다 페이지를 백그라운드에서 재생성
-export const getServerSideProps: GetServerSideProps<Props> = async ({ params }) => {
+export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
   const uuid = params?.uuid as string;
   if (!uuid) {
     return { notFound: true };
@@ -54,9 +54,10 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }) 
   const firstSentence = data.message.split('. ')[0] + '.';
   const description = firstSentence;
 
+  // site origin 은 환경변수에서
   const origin = `https://luckstargram.com`;
-  const image  = `${origin}/logo.webp`;
-  const url    = `${origin}/share/${uuid}`;
+  const image = `${origin}/logo.webp`;
+  const url = `${origin}/share/${uuid}`;
 
   return {
     props: {
@@ -86,8 +87,13 @@ export default function SharePage({ meta }: Props) {
         <meta name="twitter:title"       content={meta.title} />
         <meta name="twitter:description" content={meta.description} />
         <meta name="twitter:image"       content={meta.image} />
+
+        {/* 클라이언트 리디렉트: 즉시 메인 도메인 이동 */}
+        <meta httpEquiv="refresh" content={`0; URL=${meta.url}`} />
       </Head>
-      <div /> {/* 빈 바디: OG 메타만 필요 */}
+
+      {/* 빈 바디: OG 메타만 필요 */}
+      <div />
     </>
   );
 }
