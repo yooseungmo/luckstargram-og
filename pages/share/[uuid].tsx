@@ -36,7 +36,10 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
   }
 
   // 백엔드에서 공유용 운세 데이터 fetch
-  const res = await fetch(`${process.env.API_BASE_URL}/share/${uuid}`);
+  const res = await fetch(
+    `${process.env.API_BASE_URL}/share/${uuid}`,
+    { next: { revalidate: 60 } }
+  );
   if (!res.ok) {
     return { notFound: true };
   }
@@ -51,10 +54,9 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
   const firstSentence = data.message.split('. ')[0] + '.';
   const description = firstSentence;
 
-  // site origin 은 환경변수에서
   const origin = `https://luckstargram.com`;
-  const image = `${origin}/logo.webp`;
-  const url = `${origin}/share/${uuid}`;
+  const image  = `${origin}/logo.webp`;
+  const url    = `${origin}/share/${uuid}`;
 
   return {
     props: {
@@ -84,13 +86,8 @@ export default function SharePage({ meta }: Props) {
         <meta name="twitter:title"       content={meta.title} />
         <meta name="twitter:description" content={meta.description} />
         <meta name="twitter:image"       content={meta.image} />
-
-        {/* 클라이언트 리디렉트: 즉시 메인 도메인 이동 */}
-        <meta httpEquiv="refresh" content={`0; URL=${meta.url}`} />
       </Head>
-
-      {/* 빈 바디: OG 메타만 필요 */}
-      <div />
+      <div /> {/* 빈 바디: OG 메타만 필요 */}
     </>
   );
 }
