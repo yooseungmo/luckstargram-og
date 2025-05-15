@@ -6,6 +6,7 @@ const SOCIAL_AGENTS = ['facebookexternalhit', 'twitterbot', 'kakaotalk'];
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
+  // 루트 바로 밑의 6글자 숏코드 매칭
   const codeMatch = pathname.match(/^\/([A-Za-z0-9_-]{6,})$/);
   if (!codeMatch) {
     return NextResponse.next();
