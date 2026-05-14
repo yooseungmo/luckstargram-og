@@ -23,6 +23,8 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
+        {/* 네이버 사이트 인증 */}
+        <meta name="naver-site-verification" content="0fb0974edc03ecef50f9539be6f4c74ed2a1d9c3" />
         {/* Google Tag Manager */}
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-RKR29X3BLE" />
         <script

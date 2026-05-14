@@ -71,11 +71,17 @@ export default function SharePage({ meta }: Props) {
   return (
     <>
       <Head>
-        <title>{meta.title}</title>
+        <title>{meta.title} - 럭스타그램 LuckStargram</title>
         <meta name="description" content={meta.description} />
+        <meta name="keywords" content="럭스타그램, LuckStargram, 오늘의 운세, 운세, 데일리 운세, AI 운세, 무료 운세, 사주, 별자리 운세, 운세 공유, 행운" />
+        <meta name="robots" content="index, follow" />
+        <meta name="yeti" content="index, follow" />
+        <meta name="googlebot" content="index, follow" />
+        <link rel="canonical" href={meta.url} />
 
         {/* Open Graph */}
         <meta property="og:type"        content="website" />
+        <meta property="og:site_name"   content="LuckStargram" />
         <meta property="og:title"       content={meta.title} />
         <meta property="og:description" content={meta.description} />
         <meta property="og:image"       content={meta.image} />
